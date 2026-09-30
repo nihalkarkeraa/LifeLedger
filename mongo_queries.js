@@ -1,0 +1,8 @@
+// Run in mongosh:  use LifeLedger   then paste queries (for faculty demo / viva)
+db.items.getIndexes()
+db.items.find({ category: "Electronics" })
+db.items.aggregate([{ $group: { _id: null, totalValue: { $sum: "$purchase.price" } } }])
+db.items.aggregate([{ $group: { _id: "$category", count: { $sum: 1 } } }])
+db.items.aggregate([{ $unwind: "$repairs" }, { $group: { _id: null, totalRepairCost: { $sum: "$repairs.cost" } } }])
+db.items.find({ "warranty.endDate": { $gte: new Date(), $lte: new Date(Date.now() + 30*24*60*60*1000) } })
+db.items.find({ category: "Electronics", "warranty.endDate": { $gte: new Date() } }).explain("executionStats")
